@@ -39,9 +39,12 @@ def evaluate_symbols(current_data, new_data):
     """
     symbol_performances = {}
     for symbol in symbol_list:
-        morning_price = current_data[symbol][price]
-        evening_price = new_data[symbol]
-        price_change = (evening_price - morning_price) / morning_price
+        morning_price = float(current_data[symbol]['price'])
+        evening_price = float(new_data[symbol])
+        try:
+            price_change = (evening_price - morning_price) / morning_price
+        except:
+            price_change = 0.0
         if price_change > 0.05:
             performance = 2
         elif price_change > 0.005:
@@ -60,20 +63,20 @@ def update_past_data(current_data, symbol_performances):
     represents training data."""
     past_data = open('past_data.txt', 'a')
     for symbol in symbol_list:
-        for k, v in current_data[symbol]:
+        for k, v in current_data[symbol].items():
             past_data.write(k)
             past_data.write(',')
             past_data.write(v)
             past_data.write(';')
         past_data.write('performance,')
-        past_data.write(symbol_performances[symbol])
+        past_data.write(str(symbol_performances[symbol]))
         past_data.write('\n')
     past_data.close()
 
 def get_past_data():
     """Read past data from file into feature and class lists for training."""
     training_data = []
-    past_data = open('past_data.txt', 'a')
+    past_data = open('past_data.txt', 'r')
     for line in past_data:
         line = line.split(';')
         symbol_data = []
@@ -87,4 +90,5 @@ def get_past_data():
         # performance data
         performance_data.append(symbol_data.pop())
         training_data.append(symbol_data)
+    past_data.close()
     return training_data, performance_data
