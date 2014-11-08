@@ -15,6 +15,7 @@ def get_morning_data():
     to make their picks."""
     current_data = {}
     for symbol in symbol_list:
+        print(symbol)
         current_data[symbol] = ys.get_all(symbol)
     return current_data
 
@@ -23,6 +24,7 @@ def get_evening_prices():
     evening so that picker's picks can be evaluated."""
     new_data = {}
     for symbol in symbol_list:
+        print(symbol)
         new_data[symbol] = ys.get_price(symbol)
     return new_data
 
@@ -76,11 +78,11 @@ def update_past_data(current_data, symbol_performances):
 def get_past_data():
     """Read past data from file into feature and class lists for training."""
     training_data = []
+    performance_data = []
     past_data = open('past_data.txt', 'r')
     for line in past_data:
         line = line.split(';')
         symbol_data = []
-        performance_data = []
         for data_element in line:
             data_element = data_element.split(',')
             value = data_element[1]
@@ -88,7 +90,7 @@ def get_past_data():
         
         # move performance value (last value on line) from symbol data to
         # performance data
-        performance_data.append(symbol_data.pop())
+        performance_data.append(int(symbol_data.pop().strip('\n')))
         training_data.append(symbol_data)
     past_data.close()
     return training_data, performance_data
