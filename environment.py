@@ -5,16 +5,16 @@ Created on Fri Nov  7 16:30:50 2014
 @author: Alex
 """
 
-from environment_methods import *
-from picker_classes import *
+import environment_methods as em
+import picker_classes as pc
 
 try:
-    past_data, past_performance = get_past_data()
+    past_data, past_performance = em.get_past_data()
 except:
-    morning_data = get_morning_data()
-    evening_prices = get_evening_prices()
-    symbol_performances = evaluate_symbols(morning_data, evening_prices)
-    update_past_data()
-    past_data, past_performance = get_past_data()
+    morning_data = em.get_morning_data()
+    evening_prices = em.get_evening_prices()
+    symbol_performances = em.evaluate_symbols(morning_data, evening_prices)
+    em.update_past_data()
+    past_data, past_performance = em.get_past_data()
 
-seattle = DecisionTreeColony(100, past_data, past_performance)
+seattle = pc.DecisionTreeColony(100, past_data, past_performance)
