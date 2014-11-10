@@ -47,15 +47,15 @@ def evaluate_symbols(current_data, new_data):
             price_change = (evening_price - morning_price) / morning_price
         except:
             price_change = 0.0
-        if price_change > 0.05:
+        if price_change >= 0.05:
             performance = 2
-        elif price_change > 0.005:
+        elif price_change >= 0.005:
             performance = 1
-        elif price_change > 0.005:
+        elif price_change >= 0.0:
             performance = 0
-        elif price_change >= 0.025:
+        elif price_change >= -0.025:
             performance = -1
-        elif price_change < 0.025:
+        elif price_change < -0.025:
             performance = -2
         symbol_performances[symbol] = performance
     return symbol_performances
@@ -66,13 +66,10 @@ def update_past_data(current_data, symbol_performances):
     past_data = open('past_data.txt', 'a')
     for symbol in symbol_list:
         for k, v in current_data[symbol].items():
-            try:
-                v = int(v)
-            except:
-                continue
+            v = return_data_value_as_number(v)
             past_data.write(k)
             past_data.write(',')
-            past_data.write(v)
+            past_data.write(str(v))
             past_data.write(';')
         past_data.write('performance,')
         past_data.write(str(symbol_performances[symbol]))
@@ -102,3 +99,18 @@ def get_past_data():
         training_data.append(symbol_data)
     past_data.close()
     return training_data, performance_data
+
+def return_data_value_as_number(data_value):
+    try:
+        data_value = float(data_value)
+    except:
+        data_value = str(data_value)
+        if data_value.endswith('M'):
+            data_value = data_value.strip('M')
+            data_value = float(data_value) * (1000 ** 2)
+        elif data_value.endswith('B'):
+            data_value = data_value.strip('B')
+            data_value = float(data_value) * (1000 ** 3)
+        else:
+            data_value = 0.0
+    return data_value

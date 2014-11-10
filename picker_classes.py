@@ -5,7 +5,6 @@ Created on Thu Nov  6 21:48:06 2014
 @author: Alex
 """
 
-import random
 from sklearn import tree
 
 class Picker():
