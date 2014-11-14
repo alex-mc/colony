@@ -7,6 +7,7 @@ Created on Fri Nov  7 13:39:02 2014
 
 from values import symbol_list
 import ystockquote as ys
+from time import sleep
 
 def get_morning_data():
     """Retrieve all data available from ystockquote for each known symbol. This
@@ -16,7 +17,12 @@ def get_morning_data():
     current_data = {}
     for symbol in symbol_list:
         print(symbol)
-        current_data[symbol] = ys.get_all(symbol)
+        while True:
+            try:
+                current_data[symbol] = ys.get_all(symbol)
+                break
+            except:
+                sleep(1)
     return current_data
 
 def get_evening_prices():
@@ -25,7 +31,12 @@ def get_evening_prices():
     new_data = {}
     for symbol in symbol_list:
         print(symbol)
-        new_data[symbol] = ys.get_price(symbol)
+        while True:
+            try:
+                new_data[symbol] = ys.get_price(symbol)
+                break
+            except:
+                sleep(1)
     return new_data
 
 def evaluate_symbols(current_data, new_data):
