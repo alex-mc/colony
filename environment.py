@@ -13,7 +13,7 @@ start = clock()
 morning_data = em.get_morning_data()
 print(str(len(morning_data.keys())), "morning data points obtained in", str(clock() - start) + "s")
 
-#wait(8 * 3600)
+#sleep(8 * 3600)
 
 start = clock()
 evening_prices = em.get_evening_prices()
@@ -24,7 +24,7 @@ symbol_performances = em.evaluate_symbols(morning_data, evening_prices)
 print(str(len(symbol_performances.keys())), "symbols evaluated in", str(clock() - start) + "s")
 
 start = clock()
-em.update_past_data()
+em.update_past_data(morning_data, symbol_performances)
 past_data, past_performance = em.get_past_data()
 print("Past data updated and retrieved in", str(clock() - start) + "s")
 

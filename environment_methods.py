@@ -106,7 +106,7 @@ def get_past_data():
         
         # move performance value (last value on line) from symbol data to
         # performance data
-        performance_data.append(int(symbol_data.pop().strip('\n')))
+        performance_data.append(int(symbol_data.pop()))
         training_data.append(symbol_data)
     past_data.close()
     return training_data, performance_data
