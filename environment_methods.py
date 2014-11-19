@@ -8,6 +8,8 @@ Created on Fri Nov  7 13:39:02 2014
 from values import symbol_list
 import ystockquote as ys
 from time import sleep
+import random
+import string
 
 def get_morning_data():
     """Retrieve all data available from ystockquote for each known symbol. This
@@ -125,3 +127,6 @@ def return_data_value_as_number(data_value):
         else:
             data_value = 0.0
     return data_value
+    
+def random_string(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
