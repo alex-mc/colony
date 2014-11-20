@@ -27,11 +27,12 @@ class Environment():
                 else:
                     print("Invalid colony type:", colony[0])
     
-    def run(self, hours=8):
+    def run(self, hours=0):
         self.get_morning_data()
         for colony in self.colonies:
-            print(colony.pick())
-        #sleep(hours * 3600)
+            print(colony, colony.pick(self.current_data))
+        print("Sleeping for", str(hours), "hours...")
+        sleep(hours * 3600)
         self.get_evening_prices()
         self.evaluate_symbols()
         #evolve
@@ -142,7 +143,8 @@ class Environment():
             performance_data.append(int(symbol_data.pop()))
             training_data.append(symbol_data)
         past_data.close()
-        return training_data, performance_data
+        self.training_data = training_data
+        self.performance_data = performance_data
     
     def add_colony(self):
         None

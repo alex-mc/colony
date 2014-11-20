@@ -8,7 +8,7 @@ Created on Thu Nov  6 21:48:06 2014
 from sklearn import tree
 from sklearn.externals import joblib
 from time import clock
-from environment_methods import random_string
+from environment_methods import random_string, return_data_value_as_number
 import random
 import os
 
@@ -46,16 +46,20 @@ class Colony():
 
 class DecisionTreePicker(Picker):
     """Picker implementing simple decision tree classifier.  May be created
-    from two parents, from a string, or randomly."""
+    randomly (by leaving arguments blank), by manually entering desired arguments,
+    or from a .pkl file."""
     
     def __init__(self, criterion=None, splitter=None, max_features=None, max_depth=None, 
                  min_samples_split=None, min_samples_leaf=None, max_leaf_nodes=None, 
                  random_state=None, filename=None):
         
+        self.name = 'name_not_set_properly'
         if filename:
-            self = joblib.load(filename)
+            print("Creating picker from", filename)
+            self.alg = joblib.load(filename)
             self.name = filename.split('/')[1].strip('.pkl')
         else:
+            print("Creating new picker")
             self.name = 'DTP_' + random_string(20)
             if criterion == None:
                 criterion = random.choice(('gini', 'entropy'))
@@ -167,11 +171,19 @@ class DecisionTreeColony(Colony):
     
     def pick(self, current_data):
         picks = []
+        current_data_in_lists = []
+        for symbol, data_dict in current_data.items():
+            symbol_data = []
+            for measure, value in data_dict.items():
+                symbol_data.append(return_data_value_as_number(value))
+            current_data_in_lists.append(symbol_data)
         for picker in self.pickers:
-            picks.append(picker.pick(current_data))
+            picks.append(picker.pick(current_data_in_lists))
     
     def evaluate(self):
-        None
+        for picker in self.pickers:
+            pick = picker.get_current_pick()
+            
     
     def cull(self):
         None
