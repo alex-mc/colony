@@ -23,7 +23,12 @@ class Picker():
         None
     
     def save(self, colony_dir):
-        joblib.dump(self.alg, colony_dir + '/' + self.name + ".pkl")
+        filename = colony_dir + '/' + self.name + ".pkl"
+        if os.path.exists(filename):
+            os.remove(filename)
+            print("Removed", filename)
+        joblib.dump(self, filename)
+        print("Saved", filename)
         
 
 class Colony():
@@ -37,6 +42,7 @@ class Colony():
             os.mkdir(self.name)
         for picker in self.pickers:
             picker.save(self.name)
+        print("Saved colony", self.name)
 
 class DecisionTreePicker(Picker):
     """Picker implementing simple decision tree classifier.  May be created
@@ -44,11 +50,13 @@ class DecisionTreePicker(Picker):
     
     def __init__(self, criterion=None, splitter=None, max_features=None, max_depth=None, 
                  min_samples_split=None, min_samples_leaf=None, max_leaf_nodes=None, 
-                 random_state=None, alg_filename=None):
+                 random_state=None, filename=None):
         
-        if alg_filename:
-            self.alg = joblib.load(alg_filename)
+        if filename:
+            self = joblib.load(filename)
+            self.name = filename.split('/')[1].strip('.pkl')
         else:
+            self.name = 'DTP_' + random_string(20)
             if criterion == None:
                 criterion = random.choice(('gini', 'entropy'))
             
@@ -87,6 +95,10 @@ class DecisionTreePicker(Picker):
                 if random_state == 'int':
                     random_state = random.randint(0, 100000)
             
+            self.dna = [criterion, splitter, max_features, max_depth, 
+                 min_samples_split, min_samples_leaf, max_leaf_nodes, 
+                 random_state]
+            
             self.alg = tree.DecisionTreeClassifier(criterion, 
                                                    splitter, 
                                                    max_features, 
@@ -103,7 +115,6 @@ class DecisionTreePicker(Picker):
         self.average_return = 0
         self.last_return = 0
         self.strength = 0
-        self.name = random_string(20)
         
     def train(self, past_data, past_performance):
         self.alg = self.alg.fit(past_data, past_performance)
@@ -142,13 +153,13 @@ class DecisionTreePicker(Picker):
 class DecisionTreeColony(Colony):
     """fill in later"""
     
-    def __init__(self, size, saved_colony_filename=None):
+    def __init__(self, size, saved_colony_dirname=None):
         self.pickers = []
-        self.name = random_string(5)
-        if saved_colony_filename:
-            saved_colony = open(saved_colony_filename, 'r')
-            for line in saved_colony:
-                self.pickers.append(DecisionTreePicker(alg_filename=line))
+        self.name = 'DTC_' + str(size) + '_' + random_string(5)
+        if saved_colony_dirname:
+            self.name = saved_colony_dirname
+            for saved_picker in os.listdir(saved_colony_dirname):
+                self.pickers.append(DecisionTreePicker(filename=(saved_colony_dirname + '/' + saved_picker)))
         else:
             for i in range(size):
                 picker = DecisionTreePicker()

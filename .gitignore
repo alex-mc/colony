@@ -17,6 +17,9 @@ $RECYCLE.BIN/
 # Past Data record
 past_data.txt
 
+# Colonies
+*.pkl
+
 # =========================
 # Operating System Files
 # =========================
