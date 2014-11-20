@@ -9,23 +9,48 @@ import environment_methods as em
 import picker_classes as pc
 from time import clock, sleep
 
-start = clock()
-morning_data = em.get_morning_data()
-print(str(len(morning_data.keys())), "morning data points obtained in", str(clock() - start) + "s")
-
-#sleep(8 * 3600)
-
-start = clock()
-evening_prices = em.get_evening_prices()
-print(str(len(evening_prices.keys())), "evening prices obtained in", str(clock() - start) + "s")
-
-start = clock()
-symbol_performances = em.evaluate_symbols(morning_data, evening_prices)
-print(str(len(symbol_performances.keys())), "symbols evaluated in", str(clock() - start) + "s")
-
-start = clock()
-em.update_past_data(morning_data, symbol_performances)
-past_data, past_performance = em.get_past_data()
-print("Past data updated and retrieved in", str(clock() - start) + "s")
-
-seattle = pc.DecisionTreeColony(100, past_data, past_performance)
+class Environment():
+    
+    def __init__(self, filename=None, colonies=[['DecisionTreeColony', 100]]):
+        self.colonies = []
+        if filename:
+            None
+        else:
+            for colony in colonies:
+                if colony[0] == 'DecisionTreeColony':
+                    self.colonies.append(pc.DecisionTreeColony(colony[1]))
+                else:
+                    print("Invalid colony type:", colony[0])
+    
+    def run(self, hours=8):
+        #self.get_morning_data()
+        #sleep(hours * 3600)
+        #self.get_evening_prices()
+        #self.evaluate_symbols()
+        #self.update_past_data()
+        self.save()
+    
+    def save(self):
+        for colony in self.colonies:
+            colony.save()
+    
+    def load(self):
+        None
+    
+    def get_morning_data(self):
+        None
+    
+    def get_evening_prices(self):
+        None
+    
+    def evaluate_symbols(self):
+        None
+    
+    def update_past_data(self):
+        None
+    
+    def get_past_data(self):
+        None
+    
+    def add_colony(self):
+        None

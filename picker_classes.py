@@ -10,6 +10,7 @@ from sklearn.externals import joblib
 from time import clock
 from environment_methods import random_string
 import random
+import os
 
 
 class Picker():
@@ -21,8 +22,8 @@ class Picker():
     def pick(self):
         None
     
-    def save(self):
-        joblib.dump(self.algorithm, self.name + ".pkl")
+    def save(self, colony_dir):
+        joblib.dump(self.alg, colony_dir + '/' + self.name + ".pkl")
         
 
 class Colony():
@@ -32,7 +33,10 @@ class Colony():
         None
     
     def save(self):
-       None 
+        if not os.path.isdir(self.name):
+            os.mkdir(self.name)
+        for picker in self.pickers:
+            picker.save(self.name)
 
 class DecisionTreePicker(Picker):
     """Picker implementing simple decision tree classifier.  May be created
@@ -138,8 +142,9 @@ class DecisionTreePicker(Picker):
 class DecisionTreeColony(Colony):
     """fill in later"""
     
-    def __init__(self, size, past_data, past_performance, saved_colony_filename=None):
+    def __init__(self, size, saved_colony_filename=None):
         self.pickers = []
+        self.name = random_string(5)
         if saved_colony_filename:
             saved_colony = open(saved_colony_filename, 'r')
             for line in saved_colony:
@@ -147,7 +152,6 @@ class DecisionTreeColony(Colony):
         else:
             for i in range(size):
                 picker = DecisionTreePicker()
-                picker.train(past_data, past_performance)
                 self.pickers.append(picker)
     
     def pick(self, current_data):
@@ -168,3 +172,9 @@ class DecisionTreeColony(Colony):
         for picker in self.pickers:
             if picker.get_age() == 0:
                 picker.train(past_data, past_performance)
+    
+    def get_name(self):
+        return self.name
+        
+    def get_size(self):
+        return len(self.pickers)
